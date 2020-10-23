@@ -1,0 +1,70 @@
+#div-grid {
+	display: block;
+	--Rmax: 30px; /* circumradius */
+	--Rmin: calc(0.866*var(--Rmax)); /* inner radius, cos(30°)*--Rmax */
+	margin-left: var(--Rmax);
+	font-size: calc(0.35*var(--Rmax));
+}
+
+/* rows */
+#div-grid > div {
+	display: flex;
+	flex-direction: row;
+	height: calc(1.5*var(--Rmax));
+}
+
+#div-grid > div:nth-child(2n) {
+	margin-left: calc(1*var(--Rmin));
+}
+
+/* elements */
+#div-grid > div > div {
+	width: calc(2*var(--Rmin));
+	height: calc(2*var(--Rmax));
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+
+	background-image:url("../hexagon.svg");
+	background-size:calc(2*var(--Rmin)) calc(2*var(--Rmax));
+}
+
+#div-grid > div > div.active {
+	background-image:url("../hexagon-red.svg");
+}
+
+#div-grid > div > div.neighbour {
+	background-image:url("../hexagon-blue.svg");
+}
+
+/* circles */
+#div-grid > div > div::before {
+	position: absolute;
+	content: "";
+	width: calc(2*var(--Rmax));
+	height: calc(2*var(--Rmax));
+	background-color: darkgreen;
+	opacity: 0;
+	border-radius: 50%;
+}
+
+#div-grid > div > div::after {
+	position: absolute;
+	content: "";
+	width: calc(2*var(--Rmin));
+	height: calc(2*var(--Rmin));
+	background-color: darkred;
+	opacity: 0;
+	border-radius: 50%;
+}
+
+#div-grid.excircles > div > div::before {
+	opacity: 0.5;
+}
+
+#div-grid.incircles > div > div::after {
+	opacity: 0.5;
+}
+
