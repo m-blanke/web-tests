@@ -29,7 +29,7 @@ $(document).ready(function(){
 var divGridHexagons = []; // list
 var divGridIndex = {}; // index
 
-//neighbouring ofsets
+//neighbour offsets
 var divNeighbourOffsets = [[ //even y
 	{"x": -1, "y": 0}, // left
 	{"x": -1, "y": -1}, // top left
@@ -97,7 +97,7 @@ function divAt(x, y, el = undefined){
 	return (divGridIndex[x] || {})[y];
 }
 
-function divFindClosest(x, y, max){
+function divFindClosest(x, y, max, min = 0){
 	//find maximum valid distance
 	var hexagon;
 	var l = Infinity;
@@ -108,19 +108,23 @@ function divFindClosest(x, y, max){
 			l = d;
 			hexagon = curHexagon;
 		}
+		if(d < min) //optimize for incircle cases. we can only be in the incircle of one hexagon at once
+			return hexagon;
 	}
 	return hexagon;
 }
 
 function divGridMouseHandler(event){
 	var rMax = parseFloat($("#div-grid").css("--Rmax")); //excircle radius
+	var rMin = Math.cos(Math.PI/6)*rMax;
 
-	//calculate closest hexagon
+	//clear old hexagons
+	$("#div-grid > div > div.active").removeClass("active");
+	$("#div-grid > div > div.neighbour").removeClass("neighbour");
 
-	var hexagon = divFindClosest(event.pageX, event.pageY, rMax);
+	//identiy the hexagon the mouse is over
+	var hexagon = divFindClosest(event.pageX, event.pageY, rMax, rMin);
 	if(hexagon === undefined){
-		$("#div-grid > div > div.active").removeClass("active");
-		$("#div-grid > div > div.neighbour").removeClass("neighbour");
 		return;
 	}
 
@@ -138,7 +142,6 @@ function divGridMouseHandler(event){
 		neighbour.object.addClass("neighbour");
 	}
 }
-
 
 
 function distance(xa, ya, xb, yb){
